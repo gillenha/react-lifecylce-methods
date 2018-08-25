@@ -5,7 +5,7 @@ import Person from './Person/Person';
 class Persons extends Component {
 constructor(props) {
     super(props);
-    console.log('[Persons.js] Inside Constructor', props);
+    console.log('[Persons.js] inside Constructor', props);
   }
 
   componentWillMount() {
