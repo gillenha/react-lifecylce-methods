@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import classes from './App.css';
 import Persons from '../Components/Persons/Persons';
 import Cockpit from '../Components/Cockpit/Cockpit';
+import Auxil from '../Components/hoc/Auxil';
+import withClass from '../Components/hoc/withClass';
 
 // this is a container - it should only manage the state
 // and manipulate the state
-class App extends Component {
+class App extends PureComponent {
   constructor(props) {
     super(props);
     console.log("[App.js] Inside Constructor", props);
@@ -16,7 +18,8 @@ class App extends Component {
         { id: "3", name: "Stephanie", age: 26}
       ],
       otherState: 'some other value',
-      showPersons: false
+      showPersons: false,
+      toggleClicked: 0
     };
   }
 
@@ -28,10 +31,11 @@ class App extends Component {
     console.log('[App.js] inside componentDidMount()')
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log('[UPDATE App.js] inside shouldComponentUpdate()', nextProps, nextState );
-    return true;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log('[UPDATE App.js] inside shouldComponentUpdate()', nextProps, nextState );
+  //   return nextState.persons !== this.state.persons ||
+  //          nextState.showPersons !== this.state.showPersons;
+  // }
 
   componentWillUpdate(nextProps, nextState) {
     console.log('[UPDATE App.js] inside componentWillUpdate()', nextProps, nextState )
@@ -63,8 +67,11 @@ class App extends Component {
 
   togglePersonsHandler = () => {
     const doesShow = this.state.showPersons;
-    this.setState({
-      showPersons: !doesShow
+    this.setState( (prevState, props) => {
+      return {
+        showPersons: !doesShow,
+        toggleClicked: prevState.toggleClicked + 1
+      }
     })
   }
 
@@ -80,17 +87,22 @@ class App extends Component {
     }
 
     return (
-        <div className={classes.App}>
+        <Auxil>
+          <button 
+            onClick={() => {this.setState({
+              showPersons: true
+            })
+          }}>Show Persons</button>
           <Cockpit 
             appTitle={this.props.title}
             showPersons={this.state.showPersons}
             persons={this.state.persons}
             clicked={this.togglePersonsHandler} />
           {persons}
-        </div>
+        </Auxil>
     );
     // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, "Does this work now?"));
   }
 }
 
-export default App;
+export default withClass(App, classes.App);
